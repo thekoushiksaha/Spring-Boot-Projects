@@ -1,18 +1,62 @@
 package org.koushik.authappbackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.koushik.authappbackend.dto.LoginRequest;
+import org.koushik.authappbackend.dto.TokenResponse;
 import org.koushik.authappbackend.dto.UserDto;
+import org.koushik.authappbackend.exception.UserNotFoundException;
+import org.koushik.authappbackend.model.User;
+import org.koushik.authappbackend.repository.UserRepository;
+import org.koushik.authappbackend.security.JwtService;
 import org.koushik.authappbackend.service.AuthService;
 import org.koushik.authappbackend.service.UserService;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final ModelMapper modelMapper;
 
     @Override
     public UserDto register(UserDto userDto) {
         return userService.createUser(userDto);
+    }
+
+    @Override
+    public TokenResponse login(LoginRequest loginRequest) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.username(),
+                            loginRequest.password()
+                    )
+            );
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Invalid username or password");
+        }
+
+        User user = userRepository.findByUsername(loginRequest.username())
+                .orElseThrow(() ->
+                        new IllegalStateException("Authenticated user not found")
+                );
+
+        String accessToken = jwtService.generateAccessToken(user);
+
+        return TokenResponse.of(
+                accessToken,
+                null,
+                jwtService.getAccessTtlSeconds(),
+                modelMapper.map(user, UserDto.class)
+        );
     }
 }

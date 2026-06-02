@@ -2,6 +2,7 @@ package org.koushik.authappbackend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.Instant;
 import java.util.*;
 
+@NullMarked
 @Getter
 @Setter
 @NoArgsConstructor
@@ -42,9 +44,8 @@ public class User implements UserDetails {
 
     @PrePersist
     protected void onCreate() {
-        Instant now = Instant.now();
-        if (createdAt == null) createdAt = now;
-        updatedAt = now;
+        createdAt = Instant.now();
+        updatedAt = Instant.now();
     }
 
     @PreUpdate
@@ -58,32 +59,12 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles
                 .stream()
-                .map(role -> new SimpleGrantedAuthority(role.getUsername()))
+                .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                 .toList();
     }
 
     @Override
-    public String getUsername() {
-        return this.username;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
     public boolean isEnabled() {
-        return this.enabled;
+        return enabled;
     }
 }

@@ -11,5 +11,5 @@ import java.util.UUID;
 @Builder
 public class RoleDto {
     private UUID id;
-    private String username;
+    private String roleName;
 }

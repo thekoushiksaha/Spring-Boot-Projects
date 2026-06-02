@@ -5,7 +5,7 @@ import org.koushik.authappbackend.dto.UserDto;
 import org.koushik.authappbackend.model.Provider;
 import org.koushik.authappbackend.model.User;
 import org.koushik.authappbackend.exception.UserNotFoundException;
-import org.koushik.authappbackend.helper.UserHelper;
+import org.koushik.authappbackend.helper.ProjectHelper;
 import org.koushik.authappbackend.repository.UserRepository;
 import org.koushik.authappbackend.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto userDto, String id) {
         User existingUser = userRepository
-                .findById(UserHelper.parseUUID(id))
+                .findById(ProjectHelper.parseUUID(id))
                 .orElseThrow(
                         () -> new UserNotFoundException("User not found with id " + id)
                 );
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserById(String id) {
-        User existingUser = userRepository.findById(UserHelper.parseUUID(id))
+        User existingUser = userRepository.findById(ProjectHelper.parseUUID(id))
                 .orElseThrow(
                         () -> new UserNotFoundException("User not found with id " + id)
                 );
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(String id) {
         User user = userRepository
-                .findById(UserHelper.parseUUID(id))
+                .findById(ProjectHelper.parseUUID(id))
                 .orElseThrow(
                         () -> new UserNotFoundException("User not found with id " + id)
                 );

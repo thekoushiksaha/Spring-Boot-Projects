@@ -1,5 +1,6 @@
 package org.koushik.authappbackend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.koushik.authappbackend.model.Provider;
 
@@ -18,6 +19,8 @@ public class UserDto {
     private String fullName;
     private String email;
     private String username;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String imageUrl;
     private Boolean enabled;

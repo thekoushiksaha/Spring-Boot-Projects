@@ -1,6 +1,8 @@
 package org.koushik.authappbackend.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.koushik.authappbackend.dto.LoginRequest;
+import org.koushik.authappbackend.dto.TokenResponse;
 import org.koushik.authappbackend.dto.UserDto;
 import org.koushik.authappbackend.service.AuthService;
 import org.springframework.http.HttpStatus;
@@ -16,8 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping
-    public ResponseEntity<?> registerUser(@RequestBody UserDto user) {
+    @PostMapping("/register")
+    public ResponseEntity<UserDto> registerUser(@RequestBody UserDto user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(user));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(authService.login(loginRequest));
     }
 }

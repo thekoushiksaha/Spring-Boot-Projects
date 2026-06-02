@@ -20,5 +20,5 @@ public class Role {
     @Column(name = "role_id")
     private UUID id = UUID.randomUUID();
     @Column(unique = true, nullable = false)
-    private String username;
+    private String roleName;
 }
