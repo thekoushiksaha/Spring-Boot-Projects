@@ -1,5 +1,6 @@
 package org.koushik.authappbackend.helper;
 
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -11,5 +12,9 @@ public class ProjectHelper {
 
     public static ZonedDateTime getCurrentIndiaTime(){
         return ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+    }
+
+    public static ZonedDateTime getIndiaTime(Instant instant){
+        return instant.atZone(ZoneId.of("Asia/Kolkata"));
     }
 }

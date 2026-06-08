@@ -5,7 +5,9 @@ import org.koushik.authappbackend.dto.LoginRequest;
 import org.koushik.authappbackend.dto.TokenResponse;
 import org.koushik.authappbackend.dto.UserDto;
 import org.koushik.authappbackend.exception.UserNotFoundException;
+import org.koushik.authappbackend.model.RefreshToken;
 import org.koushik.authappbackend.model.User;
+import org.koushik.authappbackend.repository.RefreshTokenRepository;
 import org.koushik.authappbackend.repository.UserRepository;
 import org.koushik.authappbackend.security.JwtService;
 import org.koushik.authappbackend.service.AuthService;
@@ -18,6 +20,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -26,6 +31,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final ModelMapper modelMapper;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public UserDto register(UserDto userDto) {
@@ -50,11 +56,25 @@ public class AuthServiceImpl implements AuthService {
                         new IllegalStateException("Authenticated user not found")
                 );
 
+        String jti = UUID.randomUUID().toString();
+        var refreshTokenOb = RefreshToken.builder()
+                .jti(jti)
+                .user(user)
+                .createdAt(Instant.now())
+                .expiresAt(Instant.now().plusSeconds(jwtService.getRefreshTtlSeconds()))
+                .revoked(false)
+                .build();
+
+        refreshTokenRepository.save(refreshTokenOb);
+
+
+        // Generate access token
         String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user, refreshTokenOb.getJti());
 
         return TokenResponse.of(
                 accessToken,
-                null,
+                refreshToken,
                 jwtService.getAccessTtlSeconds(),
                 modelMapper.map(user, UserDto.class)
         );
