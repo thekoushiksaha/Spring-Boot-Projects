@@ -1,5 +1,6 @@
 package org.koushik.authappbackend.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.koushik.authappbackend.dto.LoginRequest;
 import org.koushik.authappbackend.dto.TokenResponse;
@@ -24,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.login(loginRequest));
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.login(loginRequest, response));
     }
 }

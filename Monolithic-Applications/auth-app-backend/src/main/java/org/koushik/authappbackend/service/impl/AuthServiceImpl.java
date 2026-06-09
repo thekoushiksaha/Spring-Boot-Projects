@@ -1,5 +1,6 @@
 package org.koushik.authappbackend.service.impl;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.koushik.authappbackend.dto.LoginRequest;
 import org.koushik.authappbackend.dto.TokenResponse;
@@ -9,6 +10,7 @@ import org.koushik.authappbackend.model.RefreshToken;
 import org.koushik.authappbackend.model.User;
 import org.koushik.authappbackend.repository.RefreshTokenRepository;
 import org.koushik.authappbackend.repository.UserRepository;
+import org.koushik.authappbackend.security.CookieService;
 import org.koushik.authappbackend.security.JwtService;
 import org.koushik.authappbackend.service.AuthService;
 import org.koushik.authappbackend.service.UserService;
@@ -32,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final ModelMapper modelMapper;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final CookieService cookieService;
 
     @Override
     public UserDto register(UserDto userDto) {
@@ -39,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public TokenResponse login(LoginRequest loginRequest) {
+    public TokenResponse login(LoginRequest loginRequest, HttpServletResponse response) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -71,6 +74,11 @@ public class AuthServiceImpl implements AuthService {
         // Generate access token
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user, refreshTokenOb.getJti());
+
+        // User cookie service to attach refresh token in cookie
+
+        cookieService.attachRefreshCookie(response, refreshToken, (int) jwtService.getRefreshTtlSeconds());
+        cookieService.addNoStoreHeaders(response);
 
         return TokenResponse.of(
                 accessToken,
