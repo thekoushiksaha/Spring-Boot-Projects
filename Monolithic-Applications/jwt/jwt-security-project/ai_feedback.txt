@@ -1,0 +1,86 @@
+Suggested Next Improvements (Very Important)
+
+Follow this order:
+
+Level 1
+
+Add:
+
+Exception handling
+Duplicate username validation
+Better DTO validation
+Level 2
+
+Add:
+
+extractClaims()
+extractExpiration()
+token expiration checks
+Level 3
+
+Add:
+
+Refresh token
+Logout mechanism
+Blacklisting token
+Level 4
+
+Add:
+
+Access denied handler
+AuthenticationEntryPoint
+Global exception handler
+Level 5
+
+Add:
+
+Swagger/OpenAPI
+Unit testing
+Integration testing
+One Important Mistake in Your Authorities Logic
+
+You used:
+
+new SimpleGrantedAuthority(user.getRole().name())
+
+This works because your enum is:
+
+ROLE_USER
+ROLE_ADMIN
+
+and Spring internally expects:
+
+ROLE_
+
+prefix.
+
+Good.
+
+But remember:
+
+hasRole("ADMIN")
+
+internally becomes:
+
+ROLE_ADMIN
+
+You understood this correctly.
+
+Excellent.
+
+Final Verdict
+
+This is no longer a beginner project.
+
+This is an intermediate-level JWT authentication system.
+
+You are now at the stage where you should focus on:
+
+security hardening
+exception handling
+token lifecycle
+production architecture
+
+rather than basic JWT syntax.
+
+The project demonstrates solid understanding of Spring Boot security fundamentals.

@@ -11,5 +11,5 @@ public interface AuthService {
     UserDto register(UserDto userDto);
     TokenResponse login(LoginRequest loginRequest, HttpServletResponse response);
     TokenResponse refreshToken(RefreshTokenRequest body, HttpServletResponse response, HttpServletRequest request);
-    Void logout(HttpServletRequest request, HttpServletResponse response);
+    void logout(HttpServletRequest request, HttpServletResponse response);
 }

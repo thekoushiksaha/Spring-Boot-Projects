@@ -152,7 +152,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Void logout(HttpServletRequest request, HttpServletResponse response) {
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
         readRefreshTokenFromRequest(null, request).ifPresent(
                 token -> {
                     try {
@@ -170,9 +170,13 @@ public class AuthServiceImpl implements AuthService {
 
         cookieService.clearRefreshCookie(response);
         cookieService.addNoStoreHeaders(response);
-        SecurityContextHolder.clearContext();
 
-        return null;
+        var session = request.getSession();
+        if(session!=null){
+            session.invalidate();
+        }
+
+        SecurityContextHolder.clearContext();
     }
 
     // this method will read refresh token from request header or body
