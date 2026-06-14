@@ -58,14 +58,10 @@ public class SecurityConfig {
                         sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/v1/auth/**",
-                                "/oauth2/**",
-                                "/login/**",
-                                "/error"
-                        ).permitAll()
+                        .requestMatchers(AppConstants.PUBLIC_URLS)
+                        .permitAll()
                         .anyRequest().authenticated())
-                .oauth2Login(outh2 -> outh2
+                .oauth2Login(oauth2 -> oauth2
                         .successHandler(successHandler)
                         .failureHandler(null)
                 )
